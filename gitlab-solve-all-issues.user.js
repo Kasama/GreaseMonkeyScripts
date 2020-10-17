@@ -1,8 +1,6 @@
 // ==UserScript==
 // @name     Gitlab Solve all threads button
 // @version  1
-// @grant    GM.setValue
-// @grant    GM.getValue
 // @include *gitlab.com*/merge_requests/*
 // ==/UserScript==
 
@@ -12,23 +10,19 @@ let newButtonId = "resolve-all-issues-button"
 let mainLoop = () => {
   let jumpToFirstButton = document.querySelector('[data-testid="jump-to-first"]');
   let miniJumpToFirstButton = document.querySelector('[data-track-label="mr_next_unresolved_thread"]');
+  let closeAllThreadsButton = document.querySelector('[data-extratag="normal"]')
+  let miniCloseAllThreadsButton = document.querySelector('[data-extratag="mini"]')
 
-  GM.getValue(newButtonExistsKey)
-    .then(exists => {
-      if (!exists && (jumpToFirstButton && miniJumpToFirstButton)) {
-          createCloseIssuesButton(jumpToFirstButton)
-          createCloseIssuesButton(miniJumpToFirstButton)
-          return GM.setValue(newButtonExistsKey, true)
-      } else if (exists && !(jumpToFirstButton || miniJumpToFirstButton)) {
-          return GM.setValue(newButtonExistsKey, false)
-      }
-    })
+  if (jumpToFirstButton && !closeAllThreadsButton)
+    createCloseIssuesButton(jumpToFirstButton, "normal")
+  if (miniJumpToFirstButton && !miniCloseAllThreadsButton)
+    createCloseIssuesButton(miniJumpToFirstButton, "mini")
 }
 
-function createCloseIssuesButton(baseNode) {
+function createCloseIssuesButton(baseNode, extra_tag) {
   let buttonBox = baseNode.parentElement
   let closeIssuesButton = baseNode.cloneNode(true);
-  let checkSvg = document.querySelector(".ic-check-circle").cloneNode(true);
+  let checkSvg = document.querySelector('svg[data-testid="check-circle-icon"]').cloneNode(true);
 
   if (checkSvg) {
     let existingSvg = closeIssuesButton.querySelector("svg")
@@ -43,6 +37,7 @@ function createCloseIssuesButton(baseNode) {
     closeIssuesButton.title = "Resolve All Threads"
   }
   closeIssuesButton.dataset['testid'] = newButtonId
+  closeIssuesButton.dataset['extratag'] = extra_tag
 
   closeIssuesButton.onclick = () => {
     Array.from(
@@ -56,8 +51,6 @@ function createCloseIssuesButton(baseNode) {
   buttonBox.append(closeIssuesButton)
   return closeIssuesButton
 }
-
-GM.setValue(newButtonExistsKey, false);
 
 let interval = setInterval(mainLoop, 1000)
 
