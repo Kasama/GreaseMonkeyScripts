@@ -26,8 +26,10 @@ function createCloseIssuesButton(baseNode, extra_tag) {
 
   if (checkSvg) {
     let existingSvg = closeIssuesButton.querySelector("svg")
-    let svgParent = existingSvg.parentNode
-    svgParent.replaceChild(checkSvg, existingSvg)
+    if (existingSvg) {
+      let svgParent = existingSvg.parentNode
+      svgParent.replaceChild(checkSvg, existingSvg)
+    }
   }
   let internalTextSpan = closeIssuesButton.querySelector("span")
   if (internalTextSpan) {
@@ -61,4 +63,3 @@ document.addEventListener("visibilitychange", () => {
     setInterval(mainLoop, 1000)
   }
 })
-
