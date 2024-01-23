@@ -8,15 +8,21 @@ let newButtonExistsKey = "buttonExists"
 let newButtonId = "resolve-all-issues-button"
 
 let mainLoop = () => {
-  let jumpToFirstButton = document.querySelector('[data-testid="jump-to-first"]');
-  let miniJumpToFirstButton = document.querySelector('[data-track-label="mr_next_unresolved_thread"]');
+  let jumpToFirstButton = document.querySelectorAll('[data-testid="jump-to-first"]');
+  let miniJumpToFirstButton = document.querySelectorAll('[data-track-label="mr_next_unresolved_thread"]');
   let closeAllThreadsButton = document.querySelector('[data-extratag="normal"]')
   let miniCloseAllThreadsButton = document.querySelector('[data-extratag="mini"]')
 
-  if (jumpToFirstButton && !closeAllThreadsButton)
-    createCloseIssuesButton(jumpToFirstButton, "normal")
-  if (miniJumpToFirstButton && !miniCloseAllThreadsButton)
-    createCloseIssuesButton(miniJumpToFirstButton, "mini")
+  if (jumpToFirstButton && !closeAllThreadsButton) {
+    for (let button of jumpToFirstButton) {
+      createCloseIssuesButton(button, "normal")
+    }
+  }
+  if (miniJumpToFirstButton && !miniCloseAllThreadsButton) {
+    for (let button of miniJumpToFirstButton) {
+      createCloseIssuesButton(button, "mini")
+    }
+  }
 }
 
 function createCloseIssuesButton(baseNode, extra_tag) {
@@ -43,7 +49,7 @@ function createCloseIssuesButton(baseNode, extra_tag) {
 
   closeIssuesButton.onclick = () => {
     Array.from(
-      document.querySelectorAll("[data-qa-selector=resolve_discussion_button]")
+      document.querySelectorAll("[data-testid=resolve-discussion-button]")
     ).filter(
       node => !node.textContent.toLowerCase().includes("unresolve")
     ).forEach(
